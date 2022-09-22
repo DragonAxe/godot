@@ -532,6 +532,7 @@ public:
 	virtual Error save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags = 0);
 	virtual void get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const;
 	virtual bool recognize(const Ref<Resource> &p_resource) const;
+	virtual String strip_trailing_whitespace(const String source) const;
 };
 
 #endif // GDSCRIPT_H

@@ -2451,6 +2451,8 @@ Error ResourceFormatSaverGDScript::save(const Ref<Resource> &p_resource, const S
 
 	String source = sqscr->get_source_code();
 
+	source = strip_trailing_whitespace(source);
+
 	{
 		Error err;
 		Ref<FileAccess> file = FileAccess::open(p_path, FileAccess::WRITE, &err);
@@ -2478,4 +2480,24 @@ void ResourceFormatSaverGDScript::get_recognized_extensions(const Ref<Resource> 
 
 bool ResourceFormatSaverGDScript::recognize(const Ref<Resource> &p_resource) const {
 	return Object::cast_to<GDScript>(*p_resource) != nullptr;
+}
+
+String ResourceFormatSaverGDScript::strip_trailing_whitespace(String source) const {
+	String striped_string;
+	striped_string.resize(source.size());
+	bool was_newline = true;
+	int insert_index = source.length();
+	for (int i = source.length() - 1; i >= 0; i--) {
+		char32_t c = source.get(i);
+		if (was_newline && (c == ' ' || c == '\t')) {
+			continue;
+		} else if (c == '\n') {
+			was_newline = true;
+		} else {
+			was_newline = false;
+		}
+		insert_index -= 1;
+		striped_string[insert_index] = c;
+	}
+	return striped_string.substr(insert_index);
 }

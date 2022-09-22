@@ -1069,28 +1069,30 @@ void CodeTextEditor::remove_find_replace_bar() {
 	find_replace_bar = nullptr;
 }
 
-void CodeTextEditor::trim_trailing_whitespace() {
-	bool trimed_whitespace = false;
+void CodeTextEditor::trim_trailing_whitespace_except_current_line() {
+	bool trimmed_whitespace = false;
 	for (int i = 0; i < text_editor->get_line_count(); i++) {
-		String line = text_editor->get_line(i);
-		if (line.ends_with(" ") || line.ends_with("\t")) {
-			if (!trimed_whitespace) {
-				text_editor->begin_complex_operation();
-				trimed_whitespace = true;
-			}
-
-			int end = 0;
-			for (int j = line.length() - 1; j > -1; j--) {
-				if (line[j] != ' ' && line[j] != '\t') {
-					end = j + 1;
-					break;
+		if (i != text_editor->get_caret_line()) {
+			String line = text_editor->get_line(i);
+			if (line.ends_with(" ") || line.ends_with("\t")) {
+				if (!trimmed_whitespace) {
+					text_editor->begin_complex_operation();
+					trimmed_whitespace = true;
 				}
+
+				int end = 0;
+				for (int j = line.length() - 1; j > -1; j--) {
+					if (line[j] != ' ' && line[j] != '\t') {
+						end = j + 1;
+						break;
+					}
+				}
+				text_editor->set_line(i, line.substr(0, end));
 			}
-			text_editor->set_line(i, line.substr(0, end));
 		}
 	}
 
-	if (trimed_whitespace) {
+	if (trimmed_whitespace) {
 		text_editor->end_complex_operation();
 		text_editor->queue_redraw();
 	}

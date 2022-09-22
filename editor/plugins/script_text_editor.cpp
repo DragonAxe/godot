@@ -351,7 +351,7 @@ void ScriptTextEditor::_convert_case(CodeTextEditor::CaseStyle p_case) {
 }
 
 void ScriptTextEditor::trim_trailing_whitespace() {
-	code_editor->trim_trailing_whitespace();
+	code_editor->trim_trailing_whitespace_except_current_line();
 }
 
 void ScriptTextEditor::insert_final_newline() {
